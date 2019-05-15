@@ -1,0 +1,42 @@
+function bianyuanjiance(img1,jiaodian,fangfa)
+img_edge1=edge(img1,'sobel');
+img_edge2=edge(img1,'prewitt');
+img_edge3=edge(img1,'canny');
+figure;
+imshow(img1);
+title('test1原图');
+
+figure;
+imshow(img_edge1);
+title('Sobel边缘检测');
+
+figure;
+imshow(img_edge2);
+title('prewitt边缘检测');
+
+figure;
+imshow(img_edge3);
+title('canny算子的图像');
+if(fangfa == 1)
+    jiance=img_edge1;
+elseif(fangfa == 2)
+    jiance=img_edge2;
+elseif(fangfa == 3)
+    jiance=img_edge3;
+else
+    jiance = img_edge1;
+end
+
+[H,T,R] = hough(jiance);%计算二值图像的标准霍夫变换，H为霍夫变换矩阵，T,R为计算霍夫变换的角度和半径值
+P  = houghpeaks(H,jiaodian);%提取极值点
+x = T(P(:,2)); 
+y = R(P(:,1));
+
+lines=houghlines(jiance,T,R,P);%提取线段
+figure;
+imshow(jiance), hold on;
+for k = 1:length(lines)
+xy = [lines(k).point1; lines(k).point2];
+plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');%画出线段
+end
+end
